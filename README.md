@@ -31,6 +31,8 @@ REST API / Backend (Node.js + Express)
 MongoDB Atlas
 ```
 
+The client never connects directly to MongoDB. All database operations go through the REST API.
+
 ---
 
 ## Database Design
@@ -84,7 +86,7 @@ sports.sport_id  (1)
 exercises.sport_id  (many)
 ```
 
-Schema diagram: `Schema_Diagram.png`
+Schema diagram: `Database_Schema_Diagram.png`
 
 ---
 
@@ -173,5 +175,3 @@ Start the server:
 ```bash
 node --env-file=.env server/server.js
 ```
-
-
