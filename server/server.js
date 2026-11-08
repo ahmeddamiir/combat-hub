@@ -42,7 +42,7 @@ app.get("/exercises/count", async (req, res) => {
     }
 });
 
-// GET /exercises/search?query=keyword: search exercises using the MongoDB text index
+// GET /exercises/search?query=keyword: search exercises using the text index
 app.get("/exercises/search", async (req, res) => {
     try {
         const query = req.query.query;
@@ -58,6 +58,19 @@ app.get("/exercises/search", async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Could not search exercises" });
+    }
+});
+
+// GET /exercises/:id: return one exercise using custom exercise_id
+app.get("/exercises/:id", async (req, res) => {
+    try {
+        const exercise = await db.collection("exercises").findOne({ exercise_id: req.params.id });
+
+        if (!exercise) return res.status(404).json({ error: "Exercise not found" });
+        res.status(200).json(exercise);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Could not read exercise data" });
     }
 });
 
