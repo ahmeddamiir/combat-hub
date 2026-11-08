@@ -42,6 +42,25 @@ app.get("/exercises/count", async (req, res) => {
     }
 });
 
+// GET /exercises/search?query=keyword: search exercises using the MongoDB text index
+app.get("/exercises/search", async (req, res) => {
+    try {
+        const query = req.query.query;
+
+        if (!query || typeof query !== "string" || query.trim() === "") {
+            return res.status(400).json({ error: "Search query is required" });
+        }
+
+        const results = await db.collection("exercises")
+            .find({ $text: { $search: query } })
+            .toArray();
+        res.status(200).json(results);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Could not search exercises" });
+    }
+});
+
 // GET /sports: return all sports (sorted by name, used for the dropdown in the form)
 app.get("/sports", async (req, res) => {
     try {
