@@ -15,6 +15,28 @@ if (!process.env.MONGO_URI) {
 const client = new MongoClient(process.env.MONGO_URI);
 let db;
 
+// Validation Helper: check the exercise data sent by the client (used by POST and PUT)
+// Returns an error message if something is wrong, or null if everything is fine
+async function validateExercise(body) {
+    const { name, category, description, difficulty, duration_minutes, sport_id } = body;
+
+    const textFields = { name, category, description, difficulty, sport_id };
+    for (const [field, value] of Object.entries(textFields)) {
+        if (typeof value !== "string" || value.trim() === "") {
+            return `${field} is required and must be text`;
+        }
+    }
+
+    if (typeof duration_minutes !== "number" || duration_minutes <= 0) {
+        return "duration_minutes must be a positive number";
+    }
+
+    const sport = await db.collection("sports").findOne({ sport_id: sport_id });
+    if (!sport) return "sport_id does not match any existing sport";
+
+    return null;
+}
+
 // 4. Test endpoint: is the API running?
 app.get("/", (req, res) => {
     res.send("Combat Hub API is running!");
