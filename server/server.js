@@ -53,6 +53,18 @@ app.get("/sports", async (req, res) => {
     }
 });
 
+// GET /sports/:id: return one sport using our custom sport_id
+app.get("/sports/:id", async (req, res) => {
+    try {
+        const sport = await db.collection("sports").findOne({ sport_id: req.params.id });
+        if (!sport) return res.status(404).json({ error: "Sport not found" });
+        res.status(200).json(sport);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Could not read sport data" });
+    }
+});
+
 // 6. Connect to Atlas first, then start the API
 async function start() {
     await client.connect();
