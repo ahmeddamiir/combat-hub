@@ -42,6 +42,17 @@ app.get("/exercises/count", async (req, res) => {
     }
 });
 
+// GET /sports: return all sports (sorted by name, used for the dropdown in the form)
+app.get("/sports", async (req, res) => {
+    try {
+        const sports = await db.collection("sports").find().sort({name: 1}).toArray();
+        res.status(200).json(sports);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Could not read sports from the database" });
+    }
+});
+
 // 6. Connect to Atlas first, then start the API
 async function start() {
     await client.connect();
