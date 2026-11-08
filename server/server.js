@@ -31,6 +31,17 @@ app.get("/exercises", async (req, res) => {
     }
 });
 
+// GET /exercises/count: return the number of exercises
+app.get("/exercises/count", async (req, res) => {
+    try {
+        const exercisesCount = await db.collection("exercises").countDocuments();
+        res.status(200).json(exercisesCount);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Could not count the exercises in the database" });
+    }
+});
+
 // 6. Connect to Atlas first, then start the API
 async function start() {
     await client.connect();
