@@ -1,6 +1,6 @@
-# MMA Training Tracker 🥊
+# Combat Sports Conditioning Hub 🥋
 
-A semester project for managing and tracking MMA (Mixed Martial Arts) training sessions and fighters using MongoDB Atlas and a RESTful API architecture.
+A semester project for the Advanced Database Systems course. It links combat sports / martial arts with the exercises and conditioning drills that build performance in each one, using MongoDB Atlas, a REST API, and a web client.
 
 ---
 
@@ -12,170 +12,145 @@ Ahmed Abdelrahman Mohamed Hassan
 
 ## Tech Stack
 
-- MongoDB Atlas
-- Node.js
-- Express.js
-- Thunder Client (API Testing)
-- HTML
-- CSS
-- JavaScript
+- Database: MongoDB Atlas
+- Backend: Node.js + Express.js
+- Client: HTML + CSS + JavaScript
+- API testing: Thunder Client
+
 ---
 
 ## Application Architecture
 
-Client ↓ REST API ↓ MongoDB Atlas
- 
+```text
+Client Application (HTML/CSS/JS)
+        │  HTTP requests
+        ▼
+REST API / Backend (Node.js + Express)
+        │  MongoDB driver
+        ▼
+MongoDB Atlas
+```
+
 ---
 
 ## Database Design
 
-The database consists of two collections:
-- sessions
-- fighters
+Database name: `combat_hub`
 
-Each collection will contain at least 5 documents.
+Two collections:
 
-### Collection A: sessions
+- `exercises` (Collection A: displayed, searched, and managed by the client)
+- `sports` (Collection B: related information shown on the Details screen)
 
-Stores MMA training session records.
+### Collection A: exercises
 
-Fields:
+Strength, conditioning, and technical drills, each belonging to one primary sport.
 
-- _id
-- title
-- type
-- duration_minutes
-- date
-- fighter_id
+| Field | Type | Description |
+|---|---|---|
+| `_id` | ObjectId | MongoDB internal ID |
+| `exercise_id` | string | Application ID (e.g. `EX001`) |
+| `name` | string | Exercise name |
+| `category` | string | Strength / Cardio / Mobility / Plyometrics / Technique / Grip |
+| `description` | string | What the exercise is and why it helps |
+| `difficulty` | string | Beginner / Intermediate / Advanced |
+| `duration_minutes` | int | Typical duration |
+| `sport_id` | string | Reference to `sports.sport_id` |
 
-Example session types:
+### Collection B: sports
 
-- Striking
-- Grappling
-- Wrestling
-- Sparring
-- Shadow Boxing
-- Drills
-- Strength Training
+| Field | Type | Description |
+|---|---|---|
+| `_id` | ObjectId | MongoDB internal ID |
+| `sport_id` | string | Application ID (e.g. `SP001`) |
+| `name` | string | Sport / martial art name |
+| `type` | string | Striking / Grappling / Hybrid |
+| `origin_country` | string | Country of origin |
+| `description` | string | Short overview |
+| `key_attributes` | string | Main physical attributes it demands (e.g. explosiveness, grip strength) |
 
-### Collection B: fighters
-
-Stores fighter information.
-
-Fields:
-
-- _id
-- name
-- weight_class
-- team
-- experience_level
+Note: general conditioning exercises (e.g. squats, rope climbs) belong to a `General Conditioning` entry in `sports`.
 
 ---
 
 ## Collection Relationship
 
-A fighter can participate in multiple training sessions.
+One sport has many exercises. Each exercise belongs to one primary sport.
 
 ```text
-fighters._id
+sports.sport_id  (1)
       │
       ▼
-sessions.fighter_id
+exercises.sport_id  (many)
 ```
 
-Each fighter can have multiple training sessions.
+Schema diagram: `Schema_Diagram.png`
 
 ---
 
 ## MongoDB Text Search
 
-Text Index:
+- Collection with the text index: `exercises`
+- Indexed fields: `name`, `description`
 
 ```javascript
-db.sessions.createIndex({
-  title: "text"
+db.exercises.createIndex({
+  name: "text",
+  description: "text"
 })
 ```
 
-Used to search training sessions by title.
+Text search query used by the API:
+
+```javascript
+db.exercises.find({ $text: { $search: "explosive" } })
+```
+
+The `GET /exercises/search?query=...` endpoint passes the `query` parameter to `$text: { $search: query }`, so it runs on the text index and returns matching exercises.
 
 ---
 
 ## REST API Endpoints
 
-### Sessions
+### Exercises (Collection A)
 
-```http
-GET /sessions
-```
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/exercises` | Return all exercises |
+| GET | `/exercises/search?query=keyword` | Search exercises using the MongoDB text index |
+| GET | `/exercises/:id` | Return one exercise by `exercise_id` |
+| POST | `/exercises` | Create a new exercise |
+| PUT | `/exercises/:id` | Update an existing exercise |
+| DELETE | `/exercises/:id` | Delete an exercise |
 
-Returns all sessions.
+### Sports (Collection B)
 
-```http
-GET /sessions/:id
-```
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/sports/:id` | Return one sport by `sport_id` |
+| GET | `/sports` | Return all sports (used for the dropdown in the New/Edit form) |
 
-Returns one session.
+Total: 8 endpoints (7 required + 1 helper).
 
-```http
-POST /sessions
-```
-
-Creates a new session.
-
-```http
-PUT /sessions/:id
-```
-
-Updates an existing session.
-
-```http
-DELETE /sessions/:id
-```
-
-Deletes a session.
-
-```http
-GET /sessions/search?query=keyword
-```
-
-Searches sessions using MongoDB text search.
-
-### Fighters
-
-```http
-GET /fighters/:id
-```
-
-Returns a fighter profile.
+Error handling: 400 for invalid input, 404 for non-existing IDs, 500 for server/database errors.
 
 ---
 
-## Project Features
+## Client Screens
 
-- Manage MMA fighters
-- Track training sessions
-- Full CRUD operations
-- MongoDB text search
-- One-to-Many relationship between collections
-- REST API architecture
----
+### Home
 
-## Home Screen
-
-- Displays all sessions
-- Search sessions
-- Select a session
+- Displays all exercises on load
+- Search field (uses `/exercises/search`)
+- Select an exercise to open Details
 - New button
----
 
-## Details Screen
+### Details
 
-- Displays selected session information
-- Displays fighter information using fighter_id
-- Edit session
-- Delete session
-- Add new session
+- Existing exercise: shows the exercise and its related sport (via `sport_id`), with Edit and Delete
+- New mode: a form to create a new exercise
+- After Add / Edit / Delete, the app returns to Home and refreshes the data
+
 ---
 
 ## Run Locally
@@ -189,14 +164,14 @@ npm install
 Create a `.env` file:
 
 ```env
-MONGODB_URI=your_connection_string
+MONGO_URI=your_connection_string
 PORT=3000
 ```
 
 Start the server:
 
 ```bash
-node server.js
+node --env-file=.env server/server.js
 ```
 
----
+
