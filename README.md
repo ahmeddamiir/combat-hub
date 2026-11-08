@@ -1,6 +1,8 @@
-# Combat Sports Conditioning Hub 🥋
+# Combat Hub 🥋
 
-A semester project for the Advanced Database Systems course. It links combat sports / martial arts with the exercises and conditioning drills that build performance in each one, using MongoDB Atlas, a REST API, and a web client.
+A Combat Sports Conditioning Hub that links combat sports / martial arts with the exercises and conditioning drills that build performance in each one, using MongoDB Atlas, a REST API, and a web client.
+
+```This is a semester project for the Advanced Database Systems course.```
 
 ---
 
