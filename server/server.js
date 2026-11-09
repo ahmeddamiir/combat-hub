@@ -156,6 +156,19 @@ app.put("/exercises/:id", async (req, res) => {
     }
 });
 
+// DELETE /exercises/:id: delete an exercise
+app.delete("/exercises/:id", async (req, res) => {
+    try {
+        const result = await db.collection("exercises").deleteOne({ exercise_id: req.params.id });
+
+        if (result.deletedCount === 0) return res.status(404).json({ error: "Exercise not found" });
+        res.status(200).json({ message: "Exercise deleted successfully" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Could not delete the exercise" });
+    }
+});
+
 // GET /sports: return all sports (sorted by name, used for the dropdown in the form)
 app.get("/sports", async (req, res) => {
     try {
