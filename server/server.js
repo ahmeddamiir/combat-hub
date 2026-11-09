@@ -115,12 +115,11 @@ app.get("/exercises/:id", async (req, res) => {
 // POST /exercises: add a new exercise
 app.post("/exercises", async (req, res) => {
     try {
-        const body = req.body || {};
+        const cleanedBody = cleanBody(req.body || {});
 
-        const validationError = await validateExercise(body);
+        const validationError = await validateExercise(cleanedBody);
         if (validationError) return res.status(400).json({ error: validationError });
 
-        const cleanedBody = cleanBody(body);
 
         // Create the next exercise_id automatically
         const last = await db.collection("exercises").find().sort({ exercise_id: -1 }).limit(1).toArray();
@@ -128,8 +127,8 @@ app.post("/exercises", async (req, res) => {
         const newId = `EX${String(nextNum).padStart(3, "0")}`;
 
         const newExercise = {
-            exercise_id: newId,
-            ...cleanedBody
+            ...cleanedBody,
+            exercise_id: newId
         };
 
         await db.collection("exercises").insertOne(newExercise);
@@ -143,12 +142,11 @@ app.post("/exercises", async (req, res) => {
 // PUT /exercises/:id: edit an existing exercise
 app.put("/exercises/:id", async (req, res) => {
     try {
-        const body = req.body || {};
+        const cleanedBody = cleanBody(req.body || {});
 
-        const validationError = await validateExercise(body);
+        const validationError = await validateExercise(cleanedBody);
         if (validationError) return res.status(400).json({ error: validationError });
 
-        const cleanedBody = cleanBody(body);
 
         const result = await db.collection("exercises").updateOne(
             { exercise_id: req.params.id },
