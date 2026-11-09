@@ -37,6 +37,24 @@ async function validateExercise(body) {
     return null;
 }
 
+// Cleaning Helper: removes whitespace from all string fields in the request body
+// and keeps non-string fields unchanged
+function cleanBody(body) {
+    const cleaned = {};
+
+    for (const key in body) {
+        const value = body[key];
+
+        if (typeof value === "string") {
+            cleaned[key] = value.trim();
+        } else {
+            cleaned[key] = value;
+        }
+    }
+
+    return cleaned
+}
+
 // 4. Test endpoint: is the API running?
 app.get("/", (req, res) => {
     res.send("Combat Hub API is running!");
@@ -104,19 +122,16 @@ app.post("/exercises", async (req, res) => {
         const validationError = await validateExercise(body);
         if (validationError) return res.status(400).json({ error: validationError });
 
+        const cleanedBody = cleanBody(body);
+
         // Create the next exercise_id automatically
         const last = await db.collection("exercises").find().sort({ exercise_id: -1 }).limit(1).toArray();
-        const nextNum = last ? parseInt(last.exercise_id.slice(2)) + 1 : 1;
+        const nextNum = last.length > 0 ? parseInt(last[0].exercise_id.slice(2)) + 1 : 1;
         const newId = `EX${String(nextNum).padStart(3, "0")}`;
 
         const newExercise = {
             exercise_id: newId,
-            name: body.name.trim(),
-            category: body.category.trim(),
-            description: body.description.trim(),
-            difficulty: body.difficulty.trim(),
-            duration_minutes: body.duration_minutes,
-            sport_id: body.sport_id.trim()
+            ...cleanedBody
         };
 
         await db.collection("exercises").insertOne(newExercise);
@@ -135,17 +150,12 @@ app.put("/exercises/:id", async (req, res) => {
         const validationError = await validateExercise(body);
         if (validationError) return res.status(400).json({ error: validationError });
 
+        const cleanedBody = cleanBody(body);
+
         const result = await db.collection("exercises").updateOne(
             { exercise_id: req.params.id },
             {
-                $set: {
-                    name: body.name.trim(),
-                    category: body.category.trim(),
-                    description: body.description.trim(),
-                    difficulty: body.difficulty.trim(),
-                    duration_minutes: body.duration_minutes,
-                    sport_id: body.sport_id.trim()
-                }
+                $set: cleanedBody
             }
         );
         if (result.matchedCount === 0)  return res.status(404).json({ error: "Exercise not found" });
