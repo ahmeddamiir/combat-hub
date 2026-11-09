@@ -96,6 +96,37 @@ app.get("/exercises/:id", async (req, res) => {
     }
 });
 
+// POST /exercises: add a new exercise
+app.post("/exercises", async (req, res) => {
+    try {
+        const body = req.body || {};
+
+        const validationError = await validateExercise(body);
+        if (validationError) return res.status(400).json({ error: validationError });
+
+        // Create the next exercise_id automatically
+        const last = await db.collection("exercises").find().sort({ exercise_id: -1 }).limit(1).toArray();
+        const nextNum = last ? parseInt(last.exercise_id.slice(2)) + 1 : 1;
+        const newId = `EX${String(nextNum).padStart(3, "0")}`;
+
+        const newExercise = {
+            exercise_id: newId,
+            name: body.name.trim(),
+            category: body.category.trim(),
+            description: body.description.trim(),
+            difficulty: body.difficulty.trim(),
+            duration_minutes: body.duration_minutes,
+            sport_id: body.sport_id.trim()
+        };
+
+        await db.collection("exercises").insertOne(newExercise);
+        res.status(201).json(newExercise);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Could not create the exercise" });
+    }
+});
+
 // GET /sports: return all sports (sorted by name, used for the dropdown in the form)
 app.get("/sports", async (req, res) => {
     try {
