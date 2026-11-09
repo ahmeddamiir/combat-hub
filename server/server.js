@@ -127,6 +127,35 @@ app.post("/exercises", async (req, res) => {
     }
 });
 
+// PUT /exercises/:id: edit an existing exercise
+app.put("/exercises/:id", async (req, res) => {
+    try {
+        const body = req.body || {};
+
+        const validationError = await validateExercise(body);
+        if (validationError) return res.status(400).json({ error: validationError });
+
+        const result = await db.collection("exercises").updateOne(
+            { exercise_id: req.params.id },
+            {
+                $set: {
+                    name: body.name.trim(),
+                    category: body.category.trim(),
+                    description: body.description.trim(),
+                    difficulty: body.difficulty.trim(),
+                    duration_minutes: body.duration_minutes,
+                    sport_id: body.sport_id.trim()
+                }
+            }
+        );
+        if (result.matchedCount === 0)  return res.status(404).json({ error: "Exercise not found" });
+        res.status(200).json({ message: "Exercise updated successfully" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Could not update the exercise" });
+    }
+});
+
 // GET /sports: return all sports (sorted by name, used for the dropdown in the form)
 app.get("/sports", async (req, res) => {
     try {
