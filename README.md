@@ -1,6 +1,12 @@
 # Combat Hub 🥋
 
-A Combat Sports Conditioning Hub that links combat sports / martial arts with the exercises and conditioning drills that build performance in each one, using MongoDB Atlas, a REST API, and a web client.
+> A dedicated combat sports conditioning platform that connects disciplines (MMA, Boxing, Wrestling, Judo, Muay Thai, BJJ) with targeted performance drills and athletic routines.
+
+[![Node.js Version](https://img.shields.io/badge/Node.js-v18+-green.svg)](https://nodejs.org/)
+[![Database](https://img.shields.io/badge/MongoDB-Atlas-brightgreen.svg)](https://www.mongodb.com/atlas)
+[![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
+
+Combat Hub is a full-stack web application designed for fighters and strength & conditioning coaches to browse, search, and manage specialized fight-camp exercises while referencing sport-specific guidelines and physical attributes.
 
 ```This is a semester project for the Advanced Database Systems course.```
 
@@ -14,11 +20,11 @@ Ahmed Abdelrahman Mohamed Hassan
 
 ## Tech Stack
 
-- Database: MongoDB Atlas
-- Backend: Node.js + Express.js
-- Client: HTML + CSS + JavaScript
-- API testing: Thunder Client
-
+- **Database**: MongoDB Atlas
+- **Backend**: Node.js + Express.js (RESTful API Architecture)
+- **Client**: HTML + CSS + JavaScript (Fetch API)
+- **API testing**: Thunder Client
+- **Environment & Tooling:** Git, dotenv (`--env-file`), nodemon / `node --watch`
 ---
 
 ## Application Architecture
@@ -43,8 +49,8 @@ Database name: `combat_hub`
 
 Two collections:
 
-- `exercises` (Collection A: displayed, searched, and managed by the client)
-- `sports` (Collection B: related information shown on the Details screen)
+- `exercises` (Collection A: displayed, searched, and managed by the client - Main CRUD collection)
+- `sports` (Collection B: related information shown on the Details screen - Reference collection)
 
 ### Collection A: exercises
 
