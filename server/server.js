@@ -37,18 +37,16 @@ async function validateExercise(body) {
     return null;
 }
 
-// Cleaning Helper: removes whitespace from all string fields in the request body
+// Cleaning Helper: keeps only the allowed fields and trims string values
 // and keeps non-string fields unchanged
 function cleanBody(body) {
+    const allowedFields = ["name", "category", "description", "difficulty", "duration_minutes", "sport_id"]
     const cleaned = {};
 
-    for (const key in body) {
-        const value = body[key];
-
-        if (typeof value === "string") {
-            cleaned[key] = value.trim();
-        } else {
-            cleaned[key] = value;
+    for (const field of allowedFields) {
+        if (body[field] !== undefined) {
+            const value = body[field];
+            cleaned[field] = typeof value === "string" ? value.trim() : value;
         }
     }
 
