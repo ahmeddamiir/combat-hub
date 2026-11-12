@@ -129,6 +129,7 @@ db.collection.("exercises").find({ text: { search: query } }).toArray()
 | Method | Endpoint | Description |
 |---|---|---|
 | GET | `/exercises` | Return all exercises |
+| GET | `/exercises/count` | Return the total number of exercises |
 | GET | `/exercises/search?query=keyword` | Search exercises using the MongoDB text index |
 | GET | `/exercises/:id` | Return one exercise by `exercise_id` |
 | POST | `/exercises` | Create a new exercise |
@@ -142,7 +143,7 @@ db.collection.("exercises").find({ text: { search: query } }).toArray()
 | GET | `/sports/:id` | Return one sport by `sport_id` |
 | GET | `/sports` | Return all sports (used for the dropdown in the New/Edit form) |
 
-Total: 8 endpoints (7 required + 1 helper).
+Total: 9 endpoints (7 required + 2 helper).
 
 Error handling: 400 for invalid input, 404 for non-existing IDs, 500 for server/database errors.
 
@@ -167,10 +168,10 @@ Error handling: 400 for invalid input, 404 for non-existing IDs, 500 for server/
 
 ## Run Locally
 
-Install dependencies:
+Start the server in development mode (with auto-reload):
 
 ```bash
-npm install
+npm run dev
 ```
 
 Create a `.env` file:
