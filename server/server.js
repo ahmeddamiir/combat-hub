@@ -125,8 +125,13 @@ app.post("/exercises", async (req, res) => {
         if (validationError) return res.status(400).json({ error: validationError });
 
 
-        // Create the next exercise_id automatically
-        const last = await db.collection("exercises").find().sort({ exercise_id: -1 }).limit(1).toArray();
+        // Create the next exercise_id automatically & safely (handles EX1000+ properly)
+        const last = await db.collection("exercises")
+        .find()
+        .collation({ locale: "en", numericOrdering: true })
+        .sort({ exercise_id: -1 })
+        .limit(1)
+        .toArray();
         const nextNum = last.length > 0 ? parseInt(last[0].exercise_id.slice(2)) + 1 : 1;
         const newId = `EX${String(nextNum).padStart(3, "0")}`;
 
