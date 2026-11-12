@@ -1,15 +1,13 @@
-// 1. Load the libraries we installed with npm
 const express = require("express");
 const { MongoClient } = require("mongodb");
 
-// 2. Create the API application
 const app = express();
 app.use(express.json());
 const PORT = process.env.PORT || 3000;
 
-// 3. Prepare the connection to MongoDB Atlas
+// Database Setup
 if (!process.env.MONGO_URI) {
-    console.error("MONGO_URI is missing. Start with: node --env-file=.env server/server.js");
+    console.error("MONGO_URI is missing. Start with: npm run dev");
     process.exit(1);
 }
 const client = new MongoClient(process.env.MONGO_URI);
@@ -198,7 +196,7 @@ app.get("/sports/:id", async (req, res) => {
     }
 });
 
-// 6. Connect to Atlas first, then start the API
+// Start Server
 async function start() {
     await client.connect();
     db = client.db('combat_hub');
@@ -216,5 +214,3 @@ start().catch((error) => {
     console.error("Could not connect to MongoDB:", error.message);
     process.exit(1);
 });
-
-
