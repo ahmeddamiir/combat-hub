@@ -110,14 +110,16 @@ db.exercises.createIndex({
 })
 ```
 
-Text search query used by the API:
+MongoDB query used in the backend (`server/server.js`):
 
 ```javascript
-db.exercises.find({ $text: { $search: "explosive" } })
+db.collection.("exercises").find({ text: { search: query } }).toArray()
 ```
 
-The `GET /exercises/search?query=...` endpoint passes the `query` parameter to `$text: { $search: query }`, so it runs on the text index and returns matching exercises.
-
+**How the search endpoint uses it:**
+1. The client sends a request to `GET /exercises/search?query=keyword` (e.g., `/exercises/search?query=explosive`).
+2. The server validates that the `query` parameter is a non-empty string (returning a `400 Bad Request` error if missing or blank).
+3. It passes the keyword into MongoDB's `$text` operator to search across the indexed `name` and `description` fields, returning the matching exercise documents as a JSON array (`200 OK`).
 ---
 
 ## REST API Endpoints
