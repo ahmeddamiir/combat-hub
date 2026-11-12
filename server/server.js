@@ -51,9 +51,15 @@ function cleanBody(body) {
     return cleaned
 }
 
-// 4. Test endpoint: is the API running?
+// Health Check & API Metadata
 app.get("/", (req, res) => {
-    res.send("Combat Hub API is running!");
+    res.status(200).json({
+        status: "success",
+        name: "Combat Hub API",
+        version: "1.0.0",
+        message: "Server is running!",
+        timestamp: new Date().toISOString()
+    })
 });
 
 // Get /exercises: return all documents from the exercises collection
@@ -71,7 +77,7 @@ app.get("/exercises", async (req, res) => {
 app.get("/exercises/count", async (req, res) => {
     try {
         const exercisesCount = await db.collection("exercises").countDocuments();
-        res.status(200).json(exercisesCount);
+        res.status(200).json({ totalExercises: exercisesCount});
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Could not count the exercises in the database" });
