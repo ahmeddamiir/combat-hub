@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Combat Hub – Home</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="index.html">Combat Hub</a>
+  </header>
+
+  <main class="page">
+    <div class="toolbar">
+      <form id="searchForm" class="search">
+        <input id="searchBox" type="text" placeholder="Search in name and description, e.g. grip" aria-label="Search exercises">
+        <button type="submit" class="button">Search</button>
+        <button type="button" class="button button-quiet" id="showAllButton">Show all</button>
+      </form>
+      <a class="button button-primary" href="details.html?mode=new">New exercise</a>
+    </div>
+
+    <p id="message" class="message" aria-live="polite"></p>
+
+    <table>
+      <thead>
+        <tr><th>Name</th><th>Category</th><th>Difficulty</th><th>Duration</th></tr>
+      </thead>
+      <tbody id="exerciseRows"></tbody>
+    </table>
+  </main>
+
+  <script src="js/home.js"></script>
+</body>
+</html>

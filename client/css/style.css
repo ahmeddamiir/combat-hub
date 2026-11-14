@@ -1,0 +1,134 @@
+/* ---------- Colours and fonts ---------- */
+:root {
+  --bg: #ECEEEC;
+  --surface: #FFFFFF;
+  --ink: #1B1F23;
+  --muted: #5B646C;
+  --line: #CDD2D0;
+  --accent: #1D4E89;
+  --accent-ink: #FFFFFF;
+
+  --heading: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --body: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+/* ---------- Base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--body);
+  line-height: 1.5;
+}
+
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ---------- Layout ---------- */
+.topbar {
+  background: var(--ink);
+  padding: 14px 24px;
+}
+
+.brand {
+  font-family: var(--heading);
+  font-weight: 700;
+  font-size: 1.75rem;
+  letter-spacing: 0.02em;
+  color: #FFFFFF;
+  text-decoration: none;
+}
+
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 28px 20px 60px;
+}
+
+.message {
+  min-height: 24px;
+  margin: 16px 0 8px;
+  color: var(--muted);
+}
+
+/* ---------- Buttons ---------- */
+.button {
+  padding: 10px 16px;
+  border: 1px solid var(--ink);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.button-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+
+.button-quiet {
+  border-color: var(--line);
+  font-weight: 500;
+}
+
+/* ---------- Home: search bar ---------- */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.search {
+  display: flex;
+  flex: 1 1 360px;
+  gap: 8px;
+}
+
+.search input {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+}
+
+/* ---------- Home: exercises table ---------- */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--surface);
+  border: 1px solid var(--line);
+}
+
+th, td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+}
+
+th {
+  background: #E1E6EA;
+  font-weight: 600;
+}
+
+tbody tr:hover {
+  background: #F3F6F9;
+}
+
+td a {
+  color: var(--accent);
+  font-weight: 600;
+}
