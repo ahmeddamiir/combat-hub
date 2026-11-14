@@ -2,7 +2,7 @@
 
 > A dedicated combat sports conditioning platform that connects disciplines (MMA, Boxing, Wrestling, Judo, Muay Thai, BJJ) with targeted performance drills and athletic routines.
 
-[![Node.js Version](https://img.shields.io/badge/Node.js-v18+-green.svg)](https://nodejs.org/)
+[![Node.js Version](https://img.shields.io/badge/Node.js-v20+-green.svg)](https://nodejs.org/)
 [![Database](https://img.shields.io/badge/MongoDB-Atlas-brightgreen.svg)](https://www.mongodb.com/atlas)
 [![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
 
@@ -24,7 +24,8 @@ Ahmed Abdelrahman Mohamed Hassan
 - **Backend**: Node.js + Express.js (RESTful API Architecture)
 - **Client**: HTML + CSS + JavaScript (Fetch API)
 - **API testing**: Thunder Client
-- **Environment & Tooling:** Git, dotenv (`--env-file`), nodemon / `node --watch`
+- **Environment & Tooling:** Git, Node.js `--env-file` (environment variables), `node --watch` (auto-reload)
+
 ---
 
 ## Application Architecture
@@ -94,7 +95,7 @@ sports.sport_id  (1)
 exercises.sport_id  (many)
 ```
 
-Schema diagram: `Database_Schema_Diagram.png`
+![Combat Hub schema diagram](Schema_Diagram.png)
 
 ---
 
@@ -113,13 +114,18 @@ db.exercises.createIndex({
 MongoDB query used in the backend (`server/server.js`):
 
 ```javascript
-db.collection.("exercises").find({ text: { search: query } }).toArray()
+db.collection("exercises")
+  .find({ $text: { $search: query } }, { projection: { score: { $meta: "textScore" } } })
+  .sort({ score: { $meta: "textScore" } })
+  .toArray()
 ```
 
 **How the search endpoint uses it:**
 1. The client sends a request to `GET /exercises/search?query=keyword` (e.g., `/exercises/search?query=explosive`).
 2. The server validates that the `query` parameter is a non-empty string (returning a `400 Bad Request` error if missing or blank).
 3. It passes the keyword into MongoDB's `$text` operator to search across the indexed `name` and `description` fields, returning the matching exercise documents as a JSON array (`200 OK`).
+4. Results are sorted by MongoDB's text relevance score (`textScore`), so the best match comes first.
+
 ---
 
 ## REST API Endpoints
@@ -143,7 +149,13 @@ db.collection.("exercises").find({ text: { search: query } }).toArray()
 | GET | `/sports/:id` | Return one sport by `sport_id` |
 | GET | `/sports` | Return all sports (used for the dropdown in the New/Edit form) |
 
-Total: 9 endpoints (7 required + 2 helper).
+### Utility
+
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api` | Health check: returns the API name, version, and status |
+
+Total: 10 endpoints (7 required + 3 helpers: `/exercises/count`, `/sports`, `/api`).
 
 Error handling: 400 for invalid input, 404 for non-existing IDs, 500 for server/database errors.
 
@@ -166,23 +178,53 @@ Error handling: 400 for invalid input, 404 for non-existing IDs, 500 for server/
 
 ---
 
-## Run Locally
+## Project Structure
 
-Start the server in development mode (with auto-reload):
-
-```bash
-npm run dev
+```text
+Combat Hub/
+├─ client/
+│  ├─ index.html        Home screen
+│  ├─ details.html      Details screen
+│  ├─ css/style.css
+│  └─ js/home.js
+├─ server/
+│  └─ server.js         REST API (also serves the client)
+├─ Schema_Diagram.png
+├─ package.json
+└─ README.md
 ```
 
-Create a `.env` file:
+---
+
+## Project Status
+
+- [x] MongoDB database: 2 collections, text index
+- [x] REST API: all endpoints tested in Thunder Client
+- [x] Home screen: list, search, New button
+- [ ] Details screen: view, edit, delete, create
+- [ ] Final end-to-end testing
+
+---
+
+## Run Locally
+
+1. Install dependencies:
+
+```bash
+npm install
+```
+
+2. Create a `.env` file in the project root:
 
 ```env
 MONGO_URI=your_connection_string
 PORT=3000
 ```
 
-Start the server:
+3. Start the server (it restarts automatically when you save a file):
 
 ```bash
-node --env-file=.env server/server.js
+npm run dev
 ```
+
+4. Open `http://localhost:3000` in your browser. The server serves both the API and the client.
