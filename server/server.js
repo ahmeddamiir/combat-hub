@@ -3,6 +3,8 @@ const { MongoClient } = require("mongodb");
 
 const app = express();
 app.use(express.json());
+const path = require("path");
+app.use(express.static(path.join(__dirname, "..", "client")));
 const PORT = process.env.PORT || 3000;
 
 // Database Setup
@@ -52,7 +54,7 @@ function cleanBody(body) {
 }
 
 // Health Check & API Metadata
-app.get("/", (req, res) => {
+app.get("/api", (req, res) => {
     res.status(200).json({
         status: "success",
         name: "Combat Hub API",
@@ -94,7 +96,8 @@ app.get("/exercises/search", async (req, res) => {
         }
 
         const results = await db.collection("exercises")
-            .find({ $text: { $search: query } })
+            .find({ $text: { $search: query } }, { projection: { score: { $meta: "textScore" } } })
+            .sort({ score: { $meta: "textScore" } })
             .toArray();
         res.status(200).json(results);
     } catch (error) {
