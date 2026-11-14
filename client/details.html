@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Combat Hub – Details</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="index.html">Combat Hub</a>
+  </header>
+
+  <main class="page">
+    <a class="back-link" href="index.html">← Back to Home</a>
+    <h1 id="pageTitle">Exercise</h1>
+    <p id="message" class="message" aria-live="polite"></p>
+
+    <form id="exerciseForm" class="form">
+      <label for="name">Name</label>
+      <input id="name" type="text" required>
+
+      <label for="category">Category</label>
+      <select id="category" required>
+        <option value="">Choose a category</option>
+        <option>Strength</option>
+        <option>Cardio</option>
+        <option>Mobility</option>
+        <option>Plyometrics</option>
+        <option>Technique</option>
+        <option>Grip</option>
+      </select>
+
+      <label for="difficulty">Difficulty</label>
+      <select id="difficulty" required>
+        <option value="">Choose a difficulty</option>
+        <option>Beginner</option>
+        <option>Intermediate</option>
+        <option>Advanced</option>
+      </select>
+
+      <label for="duration">Duration (minutes)</label>
+      <input id="duration" type="number" min="1" required>
+
+      <label for="sport">Sport</label>
+      <select id="sport" required></select>
+
+      <label for="description">Description</label>
+      <textarea id="description" rows="4" required></textarea>
+    </form>
+
+    <!-- Related sport (Collection B): only shown when an existing exercise is opened -->
+    <section id="sportPanel" class="panel" hidden>
+      <h2>Related sport</h2>
+      <dl id="sportInfo"></dl>
+    </section>
+  </main>
+
+  <script src="js/details.js"></script>
+</body>
+</html>
