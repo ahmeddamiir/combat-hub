@@ -81,8 +81,11 @@ function readForm() {
 // Save button (or Enter) calls saveExercise(), Delete button calls deleteExercise()
 document.getElementById("exerciseForm").addEventListener("submit", (event) => {
     event.preventDefault(); // stopping the browser from reloading the page
-    if (isNewMode) return; 
-    saveExercise();
+    if (isNewMode) {
+        addExercise(); // -> POST
+    } else {
+        saveExercise(); // -> PUT if the exercise exists
+    }
 });
 
 document.getElementById("deleteButton").addEventListener("click", deleteExercise);
@@ -162,11 +165,8 @@ async function saveExercise() {
 // E. Delete the exercise: DELETE /exercises/:id
 async function deleteExercise() {
     if (!confirm("Delete this exercise?")) return;
-    //   4. If it worked, go back to Home.
     try {
-        // 2. Use the same URL as saveExercise, with { method: "DELETE" } (no body, no headers).
         const response = await fetch("/exercises/" + encodeURIComponent(exerciseId), {method: "DELETE"});
-        // 3. If the response is not ok, show the error message (same idea as saveExercise).
         if (!response.ok) {
             const problem = await response.json();
             showMessage("Couldn't Delete: " + problem.error);
@@ -178,14 +178,31 @@ async function deleteExercise() {
     }
 }
 
-// F. When the page opens, decide the mode
+// F. Add a new exercise: POST /exercises
+async function addExercise() {
+    try {
+        const response = await fetch("/exercises", {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(readForm())
+        });
+        if (!response.ok) {
+            const problem = await response.json();
+            showMessage("Couldn't Add new Exercise: " + problem.error);
+            return;
+        }
+        window.location.href = "index.html"; // Back to home
+    } catch(error) {
+        showMessage("The API is not running. Start it with npm run dev");
+    }
+}
+
+// G. When the page opens, decide the mode
 async function startDetails() {
     await loadSports(); // the dropdown must be ready before we fill the form
     if (isNewMode) {
         document.getElementById("pageTitle").textContent = "New exercise";
-        // Hiding the save and delete buttons from "new exercise" page
-        document.getElementById("saveButton").hidden = true;
-        document.getElementById("deleteButton").hidden = true;
+        document.getElementById("saveButton").textContent = "Add exercise";
+        document.getElementById("deleteButton").hidden = true; // Nothing to delete yet!
         return;
     }
     if (exerciseId === null) {
