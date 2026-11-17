@@ -66,6 +66,25 @@ function showSport(sport) {
     document.getElementById("sportPanel").hidden = false;
 }
 
+// Read the values of the form and build the object we send to the API
+function readForm() {
+    return {
+        name: document.getElementById("name").value,
+        category: document.getElementById("category").value,
+        difficulty: document.getElementById("difficulty").value,
+        duration_minutes: Number(document.getElementById("duration").value),
+        sport_id: document.getElementById("sport").value,
+        description: document.getElementById("description").value
+    };
+}
+
+// Save button (or Enter) calls saveExercise(), Delete button calls deleteExercise()
+document.getElementById("exerciseForm").addEventListener("submit", (event) => {
+    event.preventDefault(); // stopping the browser from reloading the page
+    if (isNewMode) return; 
+    saveExercise();
+});
+
 // =====================================================================
 // PART 2: talk to the API
 // =====================================================================
@@ -120,7 +139,25 @@ async function loadSport(id) {
     }
 }
 
-// D. When the page opens, decide the mode
+// D. Save the changes: Put /exercises/:id
+async function saveExercise() {
+    try {
+        const response = await fetch("/exercises/" + encodeURIComponent(exerciseId), {
+            method: "PUT", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(readForm())
+        });
+        if (!response.ok) {
+            const problem = await response.json();
+            showMessage("Couldn't Save: " + problem.error);
+            return;
+        }
+        window.location.href = "index.html"; // Back to home
+    } catch (error) {
+        showMessage("The API is not running. Start it with npm run dev");
+    }
+}
+
+// F. When the page opens, decide the mode
 async function startDetails() {
     await loadSports(); // the dropdown must be ready before we fill the form
     if (isNewMode) {
