@@ -196,3 +196,9 @@ h2 {
 
 .panel dt { color: var(--muted); }
 .panel dd { margin: 0; }
+
+.form-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 18px;
+}
