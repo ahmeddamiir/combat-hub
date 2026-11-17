@@ -183,6 +183,9 @@ async function startDetails() {
     await loadSports(); // the dropdown must be ready before we fill the form
     if (isNewMode) {
         document.getElementById("pageTitle").textContent = "New exercise";
+        // Hiding the save and delete buttons from "new exercise" page
+        document.getElementById("saveButton").hidden = true;
+        document.getElementById("deleteButton").hidden = true;
         return;
     }
     if (exerciseId === null) {
