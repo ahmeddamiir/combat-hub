@@ -201,8 +201,8 @@ Combat Hub/
 - [x] MongoDB database: 2 collections, text index
 - [x] REST API: all endpoints tested in Thunder Client
 - [x] Home screen: list, search, New button
-- [ ] Details screen: view, edit, delete, create
-- [ ] Final end-to-end testing
+- [x] Details screen: view, edit, delete, create
+- [x] Final end-to-end testing
 
 ---
 
