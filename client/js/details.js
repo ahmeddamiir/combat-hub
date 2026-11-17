@@ -85,6 +85,8 @@ document.getElementById("exerciseForm").addEventListener("submit", (event) => {
     saveExercise();
 });
 
+document.getElementById("deleteButton").addEventListener("click", deleteExercise);
+
 // =====================================================================
 // PART 2: talk to the API
 // =====================================================================
@@ -149,6 +151,25 @@ async function saveExercise() {
         if (!response.ok) {
             const problem = await response.json();
             showMessage("Couldn't Save: " + problem.error);
+            return;
+        }
+        window.location.href = "index.html"; // Back to home
+    } catch (error) {
+        showMessage("The API is not running. Start it with npm run dev");
+    }
+}
+
+// E. Delete the exercise: DELETE /exercises/:id
+async function deleteExercise() {
+    if (!confirm("Delete this exercise?")) return;
+    //   4. If it worked, go back to Home.
+    try {
+        // 2. Use the same URL as saveExercise, with { method: "DELETE" } (no body, no headers).
+        const response = await fetch("/exercises/" + encodeURIComponent(exerciseId), {method: "DELETE"});
+        // 3. If the response is not ok, show the error message (same idea as saveExercise).
+        if (!response.ok) {
+            const problem = await response.json();
+            showMessage("Couldn't Delete: " + problem.error);
             return;
         }
         window.location.href = "index.html"; // Back to home
